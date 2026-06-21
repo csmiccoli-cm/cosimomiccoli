@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosimo Miccoli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #ffffff;
+      color: #a2a2a2;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── INTRO ── */
+    #intro {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      display: block;
+      padding: 25px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .intro-clip {
+      overflow: hidden;
+    }
+
+    .intro-name {
+      font-size: 12pt;
+      line-height: 13.2pt;
+      color: #a2a2a2;
+      display: block;
+      transform: translateY(100%);
+      animation:
+        slideUp   0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards,
+        slideDown 0.7s cubic-bezier(0.7, 0, 0.84, 0) 2.2s forwards;
+    }
+
+    /* intro panel itself fades out after name exits */
+    #intro {
+      animation: hideIntro 0s linear 3.1s forwards;
+    }
+
+    /* ── MAIN CONTENT ── */
+    #main {
+      padding: 25px;
+      max-width: 50vw;
+      font-size: 12pt;
+      line-height: 13.2pt;
+      visibility: hidden;
+      animation: showMain 0s linear 2.9s forwards;
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+
+    .reveal {
+      overflow: hidden;
+      display: block;
+    }
+
+    .reveal-inner {
+      display: block;
+      transform: translateY(100%);
+    }
+
+    /* triggered by JS after intro ends */
+    .animate .reveal-inner {
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .links {
+      margin-top: 8em;
+      line-height: 13.2pt;
+    }
+
+    a {
+      color: #a2a2a2;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #0000EE;
+      text-decoration: underline;
+    }
+
+    .copyright {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      font-size: 7pt;
+      line-height: 1.4;
+      color: #a2a2a2;
+      display: flex;
+      gap: 8em;
+      opacity: 0;
+      animation: showMain 0s linear 3.4s forwards;
+    }
+
+    /* ── KEYFRAMES ── */
+    @keyframes slideUp {
+      to { transform: translateY(0); }
+    }
+
+    @keyframes slideDown {
+      to { transform: translateY(-200%); }
+    }
+
+    @keyframes hideIntro {
+      to { display: none; }
+    }
+
+    @keyframes showMain {
+      to { visibility: visible; opacity: 1; }
+    }
+
+    /* ── REDUCED MOTION ── */
+    @media (prefers-reduced-motion: reduce) {
+      .intro-name, .reveal-inner {
+        animation: none;
+        transform: none;
+      }
+      #intro { display: none; }
+      #main { visibility: visible; }
+      .copyright { opacity: 1; }
+    }
+
+    /* ── BIO VERSIONS ── */
+    .bio-mobile { display: none; }
+    .bio-desktop { display: block; margin: 0; }
+
+    .bio-line {
+      overflow: hidden;
+      display: block;
+    }
+    .bio-line-inner {
+      display: block;
+      transform: translateY(100%);
+    }
+    .animate .bio-line-inner {
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .intro-name {
+        font-size: 9pt;
+        line-height: 10pt;
+      }
+
+      #main {
+        font-size: 9pt;
+        line-height: 10pt;
+        max-width: 100vw;
+      }
+
+      .links {
+        line-height: 10pt;
+      }
+
+      .copyright {
+        gap: 4em;
+      }
+
+      .copyright span:first-child {
+        white-space: nowrap;
+      }
+
+      .bio-desktop { display: none; }
+      .bio-mobile { display: block; margin: 0; }
+
+      /* bio-reveal wraps the whole mobile bio block */
+      .bio-reveal {
+        overflow: hidden;
+        display: block;
+      }
+      .bio-reveal > .reveal-inner {
+        display: block;
+        transform: translateY(100%);
+      }
+      .animate .bio-reveal > .reveal-inner {
+        animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INTRO -->
+  <div id="intro">
+    <div class="intro-clip">
+      <span class="intro-name">Cosimo Miccoli</span>
+    </div>
+    <div class="intro-clip">
+      <span class="intro-name" style="animation-delay: 0.35s, 2.2s;">Art Director &amp; Graphic Designer</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div class="reveal bio-reveal">
+      <div class="reveal-inner" data-delay="0">
+        <p class="bio-desktop">
+          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="0">Freelance graphic designer and art director, interested in developing cultural</span></span>
+          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="80">and identity-based projects. My work stems from the intersection of design,</span></span>
+          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="160">research, and storytelling, with the goal of transforming ideas and visions</span></span>
+          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="240">into visual languages capable of creating meaningful connections.</span></span>
+        </p>
+        <p class="bio-mobile">Freelance graphic designer and art director, interested in developing cultural and identity-based projects. My work stems from the intersection of design, research, and storytelling, with the goal of transforming ideas and visions into visual languages capable of creating meaningful connections.</p>
+      </div>
+    </div>
+
+    <div class="links">
+      <p>
+        <span class="reveal"><span class="reveal-inner" data-delay="360"><a href="https://www.instagram.com/cosiimo_/" target="_blank" rel="noopener noreferrer">instagram</a></span></span>
+      </p>
+      <p>
+        <span class="reveal"><span class="reveal-inner" data-delay="440"><a href="mailto:csmiccoli@gmail.com">csmiccoli@gmail.com</a></span></span>
+      </p>
+    </div>
+  </div>
+
+  <p class="copyright">
+    <span>All rights reserved.</span>
+    <span>No part of this publication may be reproduced,<br>distributed or transmitted by any forms or by any means.</span>
+  </p>
+
+  <script>
+    const INTRO_END = 2900;
+
+    setTimeout(() => {
+      document.getElementById('main').classList.add('animate');
+      document.querySelectorAll('.reveal-inner').forEach(el => {
+        const delay = parseInt(el.dataset.delay || 0);
+        el.style.animationDelay = delay + 'ms';
+      });
+    }, INTRO_END);
+  </script>
+
+</body>
+</html>
