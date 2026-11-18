@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Cosimo Miccoli – Art Direction &amp; Graphic Design</title>
-  <meta name="description" content="Cosimo Miccoli – Art Direction & Graphic Design. Website in progress.">
+  <meta name="description" content="Cosimo Miccoli – Art Direction & Graphic Design. Website under construction.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&display=swap" rel="stylesheet">
   <script>document.documentElement.classList.add("js")</script>
   <style>
+    /* Built from the Figma frame "Landing" (402 × 874) */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body { height: 100%; }
@@ -17,364 +18,307 @@
     body {
       background: #fff;
       color: #000;
-      font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
-      font-size: 12px;
-      line-height: 1.4;
-      letter-spacing: .02em;
-      text-transform: uppercase;
+      font-family: "EB Garamond", Garamond, "Times New Roman", serif;
+      font-weight: 400;
+      line-height: 1.042;
+      text-align: center;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow: hidden;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Two text blocks, flush to the left and right edges, vertically centred */
-    .side {
+    .block {
       position: fixed;
-      top: 50%;
-      z-index: 1;
-      transform: translateY(-50%);
+      left: 50%;
+      transform: translateX(-50%);
       white-space: pre;
     }
 
-    .left  { left: 20px; text-align: left; }
-    .right { right: 20px; text-align: right; }
-
-    h1 { font: inherit; }
-
-    /* The pendulum fills the screen behind the text */
-    .pendulum {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      touch-action: none;
+    .clock {
+      top: 17px;
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
     }
 
-    .pendulum.is-grabbable { cursor: grab; }
-    .pendulum.is-dragging  { cursor: grabbing; }
+    /* "Website / under construction" sits 59px above the middle of the
+       screen, the name and role right underneath */
+    .title {
+      top: calc(50% - 59px);
+      font-size: 18px;
+      text-transform: uppercase;
+    }
 
-    /* The text never gets in the way of grabbing the pendulum */
-    .side { pointer-events: none; }
+    .name {
+      top: calc(50% - 12px);
+      font-size: 10px;
+    }
 
-    /* Entrance: letters are typed in one after another */
-    .js .side .ch { visibility: hidden; }
-    .js .side .ch.is-on { visibility: visible; }
+    .legal {
+      bottom: calc(24px + env(safe-area-inset-bottom));
+      font-size: 10px;
+      line-height: 1.3;
+    }
 
-    @media (max-width: 767px) {
-      body { font-size: 10px; }
-      /* Not enough room beside the pendulum: move to the corners */
-      .side  { transform: none; }
-      .left  { top: 17px; }
-      .right { top: auto; bottom: 17px; }
+    h1, h2 { font: inherit; }
+
+    /* Words and letters are split by the script below */
+    .w, .ch { display: inline-block; }
+    .ch { will-change: transform; }
+
+    /* Entrance: one word after another rises out of a blur */
+    .js .w { opacity: 0; }
+    .w.is-in {
+      animation: word-in .9s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    @keyframes word-in {
+      0%   { opacity: 0; transform: translateY(.7em); filter: blur(6px); color: #999; }
+      45%  { opacity: 1; color: #999; }
+      100% { opacity: 1; transform: none; filter: blur(0); color: #000; }
+    }
+
+    .js .w.is-done { opacity: 1; animation: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .js .w { opacity: 1; }
+      .w.is-in { animation: none; }
     }
   </style>
 </head>
 <body>
-  <h1 class="side left">Cosimo Miccoli
-Art Direction + Graphic Design</h1>
+  <p class="block clock" data-clock>UTC+1 – 00:00:00</p>
 
-  <canvas class="pendulum" aria-hidden="true"></canvas>
+  <h1 class="block title">Website
+Under construction</h1>
 
-  <p class="side right">2026
-Website in progress</p>
+  <h2 class="block name">Cosimo Miccoli
+Art Direction &amp; Graphic Design</h2>
 
+  <p class="block legal">©2026
+P.IVA – 03373480734</p>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
   <script>
-    // Entrance for the texts: letters are typed in, left block first
     (function () {
-      var blocks = document.querySelectorAll(".side");
       var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var all = [];
-      blocks.forEach(function (el) {
-        var text = el.textContent;
-        el.setAttribute("aria-label", text.replace(/\s+/g, " "));
-        el.textContent = "";
-        for (var i = 0; i < text.length; i++) {
-          if (text[i] === "\n") { el.appendChild(document.createTextNode("\n")); continue; }
-          var span = document.createElement("span");
-          span.className = "ch";
-          span.setAttribute("aria-hidden", "true");
-          span.textContent = text[i];
-          el.appendChild(span);
-          all.push(span);
+      var clock = document.querySelector("[data-clock]");
+
+      // ---------- Clock: Italian time (UTC+1, UTC+2 in summer) ----------
+      var timeFmt, zoneFmt;
+      try {
+        timeFmt = new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Europe/Rome", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+        });
+        zoneFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Rome", timeZoneName: "shortOffset" });
+      } catch (e) {}
+
+      function clockText() {
+        var d = new Date();
+        if (!timeFmt) return clock.textContent;
+        var zone = "UTC+1";
+        if (zoneFmt) {
+          var part = zoneFmt.formatToParts(d).filter(function (p) { return p.type === "timeZoneName"; })[0];
+          if (part) zone = part.value.replace("GMT", "UTC");
         }
-      });
-      if (reduceMotion) {
-        all.forEach(function (s) { s.classList.add("is-on"); });
-        return;
-      }
-      var i = 0;
-      setTimeout(function type() {
-        if (i >= all.length) return;
-        all[i++].classList.add("is-on");
-        setTimeout(type, 28);
-      }, 700);
-    })();
-
-    // Line-drawn pendulum: a fixed pivot, a tube-like rod ending in a large
-    // ring, and a chain of small joints hanging from it. Every part follows
-    // real physics (gravity + rigid links). Any ring except the pivot can be
-    // grabbed and thrown; when left alone the pendulum keeps swinging.
-    (function () {
-      var canvas = document.querySelector(".pendulum");
-      var ctx = canvas.getContext("2d");
-      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      var AMPLITUDE = 0.75;      // radians: the swing it settles back to
-      var LINKS = 3;             // joints in the hanging chain
-      var GRAVITY = 1400;        // px/s² at full size (scaled with the drawing)
-      var SUBSTEP = 1 / 240;     // physics time step
-      var ITERATIONS = 16;       // passes that keep the links rigid
-      var STROKE = 1.5;
-
-      var w, h, dpr, size, scale;
-      // points[0] is the pivot (fixed), points[1] the large ring,
-      // then the chain joints. lengths[i] links points[i-1] and points[i].
-      var points = [], lengths = [], radii = [], invMass = [];
-      var drag = null;           // {index, x, y}
-
-      // Entrance: the pendulum grows out of the pivot, unfolds sideways and
-      // falls into its swing while the rings pop in one after another
-      var INTRO = 1.4;           // seconds for the links to reach full length
-      var baseLengths = [], baseRadii = [];
-      var introTime = reduceMotion ? Infinity : 0;
-
-      function easeOut(x) { x = Math.min(1, Math.max(0, x)); return 1 - Math.pow(1 - x, 3); }
-      function easeBack(x) {
-        x = Math.min(1, Math.max(0, x));
-        var c = 1.70158;
-        return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2);
+        return zone + " – " + timeFmt.format(d);
       }
 
-      function applyIntro() {
-        var t = introTime;
-        var grow = Math.max(0.001, easeOut(t / INTRO));
-        for (var i = 1; i < baseLengths.length; i++) lengths[i] = baseLengths[i] * grow;
-        for (var j = 0; j < baseRadii.length; j++) {
-          radii[j] = baseRadii[j] * easeBack((t - 0.12 * j) / 0.5);
-        }
-      }
-
-      function build() {
-        size = Math.min(w * 0.42, h * 0.2, 170);
-        scale = size / 170;
-        var rodLen = size, linkLen = size * 0.42;
-        var pivot = { x: w / 2, y: h / 2 - (rodLen + linkLen * LINKS) * 0.5 };
-
-        lengths = [0, rodLen];
-        radii = [9 * scale, 19 * scale];
-        invMass = [0, 0.5];
-        var bob = {
-          x: pivot.x + Math.sin(AMPLITUDE) * rodLen,
-          y: pivot.y + Math.cos(AMPLITUDE) * rodLen
-        };
-        points = [pivot, bob];
-        for (var i = 1; i <= LINKS; i++) {
-          points.push({ x: bob.x, y: bob.y + linkLen * i });
-          lengths.push(linkLen);
-          radii.push(5.5 * scale);
-          invMass.push(1);
-        }
-        baseLengths = lengths.slice();
-        baseRadii = radii.slice();
-
-        // Before (or during) the entrance, everything starts at the pivot,
-        // pointing sideways, so the links unfold out of it
-        if (introTime < INTRO + 0.6) {
-          for (var n = 1; n < points.length; n++) {
-            points[n].x = pivot.x + n * 0.01;
-            points[n].y = pivot.y;
+      var clockFrozen = false;
+      function tick() {
+        if (clockFrozen) return;
+        var text = clockText();
+        var chars = clock.querySelectorAll(".ch");
+        if (chars.length === text.replace(/ /g, "").length) {
+          // Same shape: update the letters in place, keeping the spans
+          var k = 0;
+          clock.setAttribute("aria-label", text);
+          for (var i = 0; i < text.length; i++) {
+            if (text[i] !== " ") chars[k++].textContent = text[i];
           }
-          applyIntro();
-        }
-        points.forEach(function (p) { p.px = p.x; p.py = p.y; });
-        drag = null;
-      }
-
-      function resize() {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
-        w = window.innerWidth;
-        h = window.innerHeight;
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        build();
-      }
-
-      // Total reach from the pivot to point i, to keep a dragged ring
-      // where the links can actually follow it
-      function reach(i) {
-        var r = 0;
-        for (var k = 1; k <= i; k++) r += lengths[k];
-        return r;
-      }
-
-      // Keeps the swing alive: nudges the large ring's energy back
-      // towards the energy of the resting swing
-      function pump(dt) {
-        var bob = points[1], pivot = points[0];
-        var g = GRAVITY * scale;
-        var vx = (bob.x - bob.px) / dt, vy = (bob.y - bob.py) / dt;
-        var height = pivot.y + lengths[1] - bob.y;
-        var energy = 0.5 * (vx * vx + vy * vy) + g * height;
-        var target = g * lengths[1] * (1 - Math.cos(AMPLITUDE));
-        if (energy < target * 0.02) {
-          // Hanging still at the bottom: give it a small push sideways
-          bob.px -= 40 * scale * dt;
-          return;
-        }
-        var f = 1 + 1.2 * dt * (target - energy) / Math.max(energy, target);
-        bob.px = bob.x - (bob.x - bob.px) * f;
-        bob.py = bob.y - (bob.y - bob.py) * f;
-      }
-
-      function step(dt) {
-        var g = GRAVITY * scale * dt * dt;
-
-        for (var i = 1; i < points.length; i++) {
-          var p = points[i];
-          var vx = (p.x - p.px) * 0.9995;
-          var vy = (p.y - p.py) * 0.9995;
-          p.px = p.x; p.py = p.y;
-          p.x += vx;
-          p.y += vy + g;
-        }
-
-        if (drag) {
-          var d = points[drag.index], pv = points[0];
-          var dx = drag.x - pv.x, dy = drag.y - pv.y;
-          var dist = Math.hypot(dx, dy) || 1;
-          var max = reach(drag.index);
-          var k = dist > max ? max / dist : 1;
-          d.x = pv.x + dx * k;
-          d.y = pv.y + dy * k;
-        }
-
-        for (var it = 0; it < ITERATIONS; it++) {
-          for (var j = 1; j < points.length; j++) {
-            var a = points[j - 1], b = points[j];
-            var wa = invMass[j - 1], wb = invMass[j];
-            if (drag && drag.index === j - 1) wa = 0;
-            if (drag && drag.index === j) wb = 0;
-            if (wa + wb === 0) continue;
-            var ex = b.x - a.x, ey = b.y - a.y;
-            var len = Math.hypot(ex, ey) || 1;
-            var diff = (len - lengths[j]) / len / (wa + wb);
-            a.x += ex * diff * wa; a.y += ey * diff * wa;
-            b.x -= ex * diff * wb; b.y -= ey * diff * wb;
-          }
-        }
-
-        if (!drag && introTime > INTRO + 0.6) pump(dt);
-      }
-
-      // A tube: a black line with a narrower white line inside it
-      function tube(a, b, width) {
-        ctx.lineCap = "butt";
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = width + STROKE * 2;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = width;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-      }
-
-      function ring(p, r) {
-        if (r <= 0.1) return;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff";
-        ctx.fill();
-        ctx.lineWidth = STROKE;
-        ctx.strokeStyle = "#000";
-        ctx.stroke();
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, w, h);
-        // Chain first, rod on top, then the rings over the tubes
-        for (var i = points.length - 1; i >= 2; i--) tube(points[i - 1], points[i], 4 * scale);
-        tube(points[0], points[1], 9 * scale);
-        for (var j = points.length - 1; j >= 0; j--) ring(points[j], radii[j]);
-      }
-
-      // Grabbing: any ring except the pivot
-      function ringAt(x, y) {
-        var best = -1, bestDist = Infinity;
-        for (var i = 1; i < points.length; i++) {
-          var d = Math.hypot(x - points[i].x, y - points[i].y);
-          var hit = radii[i] + 14; // a little extra room, easier on touch
-          if (d < hit && d < bestDist) { best = i; bestDist = d; }
-        }
-        return best;
-      }
-
-      canvas.addEventListener("pointerdown", function (e) {
-        var i = ringAt(e.clientX, e.clientY);
-        if (i < 0) return;
-        drag = { index: i, x: e.clientX, y: e.clientY, t: e.timeStamp / 1000, vx: 0, vy: 0 };
-        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
-        canvas.classList.add("is-dragging");
-        e.preventDefault();
-      });
-
-      canvas.addEventListener("pointermove", function (e) {
-        if (drag) {
-          // Track the hand's speed so a release throws the ring
-          var t = e.timeStamp / 1000, dt = t - drag.t;
-          if (dt > 0) {
-            var k = Math.min(1, dt / 0.05);
-            drag.vx += ((e.clientX - drag.x) / dt - drag.vx) * k;
-            drag.vy += ((e.clientY - drag.y) / dt - drag.vy) * k;
-          }
-          drag.x = e.clientX;
-          drag.y = e.clientY;
-          drag.t = t;
         } else {
-          canvas.classList.toggle("is-grabbable", ringAt(e.clientX, e.clientY) > 0);
+          split(clock, text);
+          clock.querySelectorAll(".w").forEach(function (w) { w.classList.add("is-done"); });
         }
+      }
+
+      // ---------- Split text into words (for the entrance) and letters (for the fall) ----------
+      function split(el, text) {
+        text = text == null ? el.textContent : text;
+        el.setAttribute("aria-label", text.replace(/\s+/g, " ").trim());
+        el.textContent = "";
+        text.split("\n").forEach(function (line, li) {
+          if (li) el.appendChild(document.createTextNode("\n"));
+          line.split(" ").forEach(function (word, wi) {
+            if (wi) el.appendChild(document.createTextNode(" "));
+            if (!word) return;
+            var w = document.createElement("span");
+            w.className = "w";
+            w.setAttribute("aria-hidden", "true");
+            for (var i = 0; i < word.length; i++) {
+              var c = document.createElement("span");
+              c.className = "ch";
+              c.textContent = word[i];
+              w.appendChild(c);
+            }
+            el.appendChild(w);
+          });
+        });
+      }
+
+      // Order of the entrance: title, name and role, clock, legal lines
+      var order = [".title", ".name", ".clock", ".legal"].map(function (s) {
+        return document.querySelector(s);
+      });
+      split(clock, clockText());
+      order.forEach(function (el) { if (el !== clock) split(el); });
+      setInterval(tick, 1000);
+
+      var words = [];
+      order.forEach(function (el) {
+        Array.prototype.push.apply(words, el.querySelectorAll(".w"));
       });
 
-      function release() {
-        if (!drag) return;
-        var p = points[drag.index];
-        var max = 2500 * scale; // px/s, keeps wild throws in check
-        var vx = Math.max(-max, Math.min(max, drag.vx));
-        var vy = Math.max(-max, Math.min(max, drag.vy));
-        p.px = p.x - vx * SUBSTEP;
-        p.py = p.y - vy * SUBSTEP;
-        drag = null;
-        canvas.classList.remove("is-dragging");
+      var entranceTimer = null;
+      function finishEntrance() {
+        clearTimeout(entranceTimer);
+        words.forEach(function (w) { w.classList.remove("is-in"); w.classList.add("is-done"); });
       }
-      canvas.addEventListener("pointerup", release);
-      canvas.addEventListener("pointercancel", release);
-
-      resize();
-      window.addEventListener("resize", resize);
 
       if (reduceMotion) {
-        // No automatic swing, but the rings can still be moved by hand
-        AMPLITUDE = 0;
-        build();
+        finishEntrance();
+      } else {
+        var n = 0;
+        var startEntrance = function () {
+          entranceTimer = setTimeout(function next() {
+            if (n >= words.length) return;
+            var w = words[n++];
+            w.classList.add("is-in");
+            w.addEventListener("animationend", function () {
+              w.classList.remove("is-in");
+              w.classList.add("is-done");
+            }, { once: true });
+            // The two title words arrive slowly, the rest follow quicker
+            entranceTimer = setTimeout(next, n < 3 ? 320 : 150);
+          }, 250);
+        };
+        // Wait for the font so the words don't jump when it arrives
+        var started = false;
+        var go = function () { if (!started) { started = true; startEntrance(); } };
+        if (document.fonts && document.fonts.ready) { document.fonts.ready.then(go); setTimeout(go, 600); }
+        else go();
       }
 
-      var last = null, carry = 0;
-      function frame(now) {
-        now /= 1000;
-        if (last === null) last = now;
-        carry += Math.min(now - last, 0.1);
-        last = now;
-        while (carry >= SUBSTEP) {
-          if (introTime < INTRO + 0.6) {
-            introTime += SUBSTEP;
-            applyIntro();
-          }
-          step(SUBSTEP);
-          carry -= SUBSTEP;
-        }
-        draw();
-        requestAnimationFrame(frame);
+      // ---------- Click: letters fall to the bottom with gravity; click again to rebuild ----------
+      if (reduceMotion || !window.Matter) return;
+
+      var M = window.Matter;
+      var engine = null, letters = [], walls = [], raf = null;
+      var state = "home"; // home | falling | returning
+
+      function makeWalls() {
+        var w = window.innerWidth, h = window.innerHeight, t = 200;
+        return [
+          M.Bodies.rectangle(w / 2, h + t / 2, w * 3, t, { isStatic: true, friction: 0.8 }),
+          M.Bodies.rectangle(-t / 2, h / 2, t, h * 4, { isStatic: true }),
+          M.Bodies.rectangle(w + t / 2, h / 2, t, h * 4, { isStatic: true })
+        ];
       }
-      requestAnimationFrame(frame);
+
+      function drop() {
+        finishEntrance();
+        clockFrozen = true;
+        state = "falling";
+
+        engine = M.Engine.create();
+        engine.gravity.y = 1;
+        engine.positionIterations = 10;
+        engine.velocityIterations = 8;
+
+        letters = Array.prototype.map.call(document.querySelectorAll(".ch"), function (el) {
+          el.style.transform = "";
+          var r = el.getBoundingClientRect();
+          var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          // The box hugs the glyph a little tighter than the line box
+          var bw = Math.max(2, r.width * 0.92), bh = Math.max(2, r.height * 0.7);
+          var body = M.Bodies.rectangle(cx, cy, bw, bh, {
+            friction: 0.6,
+            frictionAir: 0.012,
+            restitution: 0.25,
+            density: 0.002,
+            chamfer: { radius: Math.min(bw, bh) * 0.2 }
+          });
+          // A little nudge so they don't fall as one flat block
+          M.Body.setVelocity(body, { x: (Math.random() - 0.5) * 1.2, y: -Math.random() * 1.5 });
+          M.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.08);
+          return { el: el, body: body, x: cx, y: cy };
+        });
+
+        walls = makeWalls();
+        M.Composite.add(engine.world, walls.concat(letters.map(function (l) { return l.body; })));
+
+        var last = performance.now();
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function loop(now) {
+          var dt = Math.min(now - last, 34);
+          last = now;
+          // Two half steps per frame keep the small letters steady
+          M.Engine.update(engine, dt / 2);
+          M.Engine.update(engine, dt / 2);
+          letters.forEach(function (l) {
+            var p = l.body.position;
+            l.el.style.transform =
+              "translate(" + (p.x - l.x) + "px," + (p.y - l.y) + "px) rotate(" + l.body.angle + "rad)";
+          });
+          if (state === "falling") raf = requestAnimationFrame(loop);
+        });
+      }
+
+      function rebuild() {
+        state = "returning";
+        cancelAnimationFrame(raf);
+        var duration = 1100;
+        var from = letters.map(function (l) {
+          return { dx: l.body.position.x - l.x, dy: l.body.position.y - l.y, a: l.body.angle };
+        });
+        var delays = letters.map(function () { return Math.random() * 300; });
+        var start = performance.now();
+        function ease(t) { return 1 - Math.pow(1 - t, 4); }
+        raf = requestAnimationFrame(function loop(now) {
+          var done = true;
+          letters.forEach(function (l, i) {
+            var t = Math.min(1, Math.max(0, (now - start - delays[i]) / duration));
+            if (t < 1) done = false;
+            var k = 1 - ease(t);
+            l.el.style.transform = k
+              ? "translate(" + from[i].dx * k + "px," + from[i].dy * k + "px) rotate(" + from[i].a * k + "rad)"
+              : "";
+          });
+          if (!done) { raf = requestAnimationFrame(loop); return; }
+          M.Engine.clear(engine);
+          engine = null;
+          letters = [];
+          state = "home";
+          clockFrozen = false;
+          tick();
+        });
+      }
+
+      document.addEventListener("pointerdown", function (e) {
+        if (e.button > 0) return;
+        if (state === "home") drop();
+        else if (state === "falling") rebuild();
+      });
+
+      window.addEventListener("resize", function () {
+        if (state !== "falling") return;
+        M.Composite.remove(engine.world, walls);
+        walls = makeWalls();
+        M.Composite.add(engine.world, walls);
+      });
     })();
   </script>
 </body>
