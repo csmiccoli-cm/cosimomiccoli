@@ -1,255 +1,381 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cosimo Miccoli</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cosimo Miccoli – Art Direction &amp; Graphic Design</title>
+  <meta name="description" content="Cosimo Miccoli – Art Direction & Graphic Design. Website in progress.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+  <script>document.documentElement.classList.add("js")</script>
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
 
     body {
-      background: #ffffff;
-      color: #a2a2a2;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
+      background: #fff;
+      color: #000;
+      font-family: "Roboto Mono", ui-monospace, Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      letter-spacing: .02em;
+      text-transform: uppercase;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
     }
 
-    /* ── INTRO ── */
-    #intro {
+    /* Two text blocks, flush to the left and right edges, vertically centred */
+    .side {
+      position: fixed;
+      top: 50%;
+      z-index: 1;
+      transform: translateY(-50%);
+      white-space: pre;
+    }
+
+    .left  { left: 20px; text-align: left; }
+    .right { right: 20px; text-align: right; }
+
+    h1 { font: inherit; }
+
+    /* The pendulum fills the screen behind the text */
+    .pendulum {
       position: fixed;
       inset: 0;
-      background: #ffffff;
-      display: block;
-      padding: 25px;
-      z-index: 100;
-      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
     }
 
-    .intro-clip {
-      overflow: hidden;
-    }
+    .pendulum.is-grabbable { cursor: grab; }
+    .pendulum.is-dragging  { cursor: grabbing; }
 
-    .intro-name {
-      font-size: 12pt;
-      line-height: 13.2pt;
-      color: #a2a2a2;
-      display: block;
-      transform: translateY(100%);
-      animation:
-        slideUp   0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards,
-        slideDown 0.7s cubic-bezier(0.7, 0, 0.84, 0) 2.2s forwards;
-    }
+    /* The text never gets in the way of grabbing the pendulum */
+    .side { pointer-events: none; }
 
-    /* intro panel itself fades out after name exits */
-    #intro {
-      animation: hideIntro 0s linear 3.1s forwards;
-    }
+    /* Entrance: letters are typed in one after another */
+    .js .side .ch { visibility: hidden; }
+    .js .side .ch.is-on { visibility: visible; }
 
-    /* ── MAIN CONTENT ── */
-    #main {
-      padding: 25px;
-      max-width: 50vw;
-      font-size: 12pt;
-      line-height: 13.2pt;
-      visibility: hidden;
-      animation: showMain 0s linear 2.9s forwards;
-    }
-
-    p {
-      margin-bottom: 0;
-    }
-
-    .reveal {
-      overflow: hidden;
-      display: block;
-    }
-
-    .reveal-inner {
-      display: block;
-      transform: translateY(100%);
-    }
-
-    /* triggered by JS after intro ends */
-    .animate .reveal-inner {
-      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .links {
-      margin-top: 8em;
-      line-height: 13.2pt;
-    }
-
-    a {
-      color: #a2a2a2;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: #0000EE;
-      text-decoration: underline;
-    }
-
-    .copyright {
-      position: fixed;
-      bottom: 25px;
-      left: 25px;
-      font-size: 7pt;
-      line-height: 1.4;
-      color: #a2a2a2;
-      display: flex;
-      gap: 8em;
-      opacity: 0;
-      animation: showMain 0s linear 3.4s forwards;
-    }
-
-    /* ── KEYFRAMES ── */
-    @keyframes slideUp {
-      to { transform: translateY(0); }
-    }
-
-    @keyframes slideDown {
-      to { transform: translateY(-200%); }
-    }
-
-    @keyframes hideIntro {
-      to { display: none; }
-    }
-
-    @keyframes showMain {
-      to { visibility: visible; opacity: 1; }
-    }
-
-    /* ── REDUCED MOTION ── */
-    @media (prefers-reduced-motion: reduce) {
-      .intro-name, .reveal-inner {
-        animation: none;
-        transform: none;
-      }
-      #intro { display: none; }
-      #main { visibility: visible; }
-      .copyright { opacity: 1; }
-    }
-
-    /* ── BIO VERSIONS ── */
-    .bio-mobile { display: none; }
-    .bio-desktop { display: block; margin: 0; }
-
-    .bio-line {
-      overflow: hidden;
-      display: block;
-    }
-    .bio-line-inner {
-      display: block;
-      transform: translateY(100%);
-    }
-    .animate .bio-line-inner {
-      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    /* ── MOBILE ── */
-    @media (max-width: 768px) {
-      .intro-name {
-        font-size: 9pt;
-        line-height: 10pt;
-      }
-
-      #main {
-        font-size: 9pt;
-        line-height: 10pt;
-        max-width: 100vw;
-      }
-
-      .links {
-        line-height: 10pt;
-      }
-
-      .copyright {
-        gap: 4em;
-      }
-
-      .copyright span:first-child {
-        white-space: nowrap;
-      }
-
-      .bio-desktop { display: none; }
-      .bio-mobile { display: block; margin: 0; }
-
-      /* bio-reveal wraps the whole mobile bio block */
-      .bio-reveal {
-        overflow: hidden;
-        display: block;
-      }
-      .bio-reveal > .reveal-inner {
-        display: block;
-        transform: translateY(100%);
-      }
-      .animate .bio-reveal > .reveal-inner {
-        animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      }
+    @media (max-width: 767px) {
+      body { font-size: 10px; }
+      /* Not enough room beside the pendulum: move to the corners */
+      .side  { transform: none; }
+      .left  { top: 17px; }
+      .right { top: auto; bottom: 17px; }
     }
   </style>
 </head>
 <body>
+  <h1 class="side left">Cosimo Miccoli
+Art Direction + Graphic Design</h1>
 
-  <!-- INTRO -->
-  <div id="intro">
-    <div class="intro-clip">
-      <span class="intro-name">Cosimo Miccoli</span>
-    </div>
-    <div class="intro-clip">
-      <span class="intro-name" style="animation-delay: 0.35s, 2.2s;">Art Director &amp; Graphic Designer</span>
-    </div>
-  </div>
+  <canvas class="pendulum" aria-hidden="true"></canvas>
 
-  <!-- MAIN -->
-  <div id="main">
-    <div class="reveal bio-reveal">
-      <div class="reveal-inner" data-delay="0">
-        <p class="bio-desktop">
-          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="0">Freelance graphic designer and art director, interested in developing cultural</span></span>
-          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="80">and identity-based projects. My work stems from the intersection of design,</span></span>
-          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="160">research, and storytelling, with the goal of transforming ideas and visions</span></span>
-          <span class="reveal bio-line"><span class="reveal-inner bio-line-inner" data-delay="240">into visual languages capable of creating meaningful connections.</span></span>
-        </p>
-        <p class="bio-mobile">Freelance graphic designer and art director, interested in developing cultural and identity-based projects. My work stems from the intersection of design, research, and storytelling, with the goal of transforming ideas and visions into visual languages capable of creating meaningful connections.</p>
-      </div>
-    </div>
-
-    <div class="links">
-      <p>
-        <span class="reveal"><span class="reveal-inner" data-delay="360"><a href="https://www.instagram.com/cosiimo_/" target="_blank" rel="noopener noreferrer">instagram</a></span></span>
-      </p>
-      <p>
-        <span class="reveal"><span class="reveal-inner" data-delay="440"><a href="mailto:csmiccoli@gmail.com">csmiccoli@gmail.com</a></span></span>
-      </p>
-    </div>
-  </div>
-
-  <p class="copyright">
-    <span>All rights reserved.</span>
-    <span>No part of this publication may be reproduced,<br>distributed or transmitted by any forms or by any means.</span>
-  </p>
+  <p class="side right">2026
+Website in progress</p>
 
   <script>
-    const INTRO_END = 2900;
-
-    setTimeout(() => {
-      document.getElementById('main').classList.add('animate');
-      document.querySelectorAll('.reveal-inner').forEach(el => {
-        const delay = parseInt(el.dataset.delay || 0);
-        el.style.animationDelay = delay + 'ms';
+    // Entrance for the texts: letters are typed in, left block first
+    (function () {
+      var blocks = document.querySelectorAll(".side");
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var all = [];
+      blocks.forEach(function (el) {
+        var text = el.textContent;
+        el.setAttribute("aria-label", text.replace(/\s+/g, " "));
+        el.textContent = "";
+        for (var i = 0; i < text.length; i++) {
+          if (text[i] === "\n") { el.appendChild(document.createTextNode("\n")); continue; }
+          var span = document.createElement("span");
+          span.className = "ch";
+          span.setAttribute("aria-hidden", "true");
+          span.textContent = text[i];
+          el.appendChild(span);
+          all.push(span);
+        }
       });
-    }, INTRO_END);
-  </script>
+      if (reduceMotion) {
+        all.forEach(function (s) { s.classList.add("is-on"); });
+        return;
+      }
+      var i = 0;
+      setTimeout(function type() {
+        if (i >= all.length) return;
+        all[i++].classList.add("is-on");
+        setTimeout(type, 28);
+      }, 700);
+    })();
 
+    // Line-drawn pendulum: a fixed pivot, a tube-like rod ending in a large
+    // ring, and a chain of small joints hanging from it. Every part follows
+    // real physics (gravity + rigid links). Any ring except the pivot can be
+    // grabbed and thrown; when left alone the pendulum keeps swinging.
+    (function () {
+      var canvas = document.querySelector(".pendulum");
+      var ctx = canvas.getContext("2d");
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      var AMPLITUDE = 0.75;      // radians: the swing it settles back to
+      var LINKS = 3;             // joints in the hanging chain
+      var GRAVITY = 1400;        // px/s² at full size (scaled with the drawing)
+      var SUBSTEP = 1 / 240;     // physics time step
+      var ITERATIONS = 16;       // passes that keep the links rigid
+      var STROKE = 1.5;
+
+      var w, h, dpr, size, scale;
+      // points[0] is the pivot (fixed), points[1] the large ring,
+      // then the chain joints. lengths[i] links points[i-1] and points[i].
+      var points = [], lengths = [], radii = [], invMass = [];
+      var drag = null;           // {index, x, y}
+
+      // Entrance: the pendulum grows out of the pivot, unfolds sideways and
+      // falls into its swing while the rings pop in one after another
+      var INTRO = 1.4;           // seconds for the links to reach full length
+      var baseLengths = [], baseRadii = [];
+      var introTime = reduceMotion ? Infinity : 0;
+
+      function easeOut(x) { x = Math.min(1, Math.max(0, x)); return 1 - Math.pow(1 - x, 3); }
+      function easeBack(x) {
+        x = Math.min(1, Math.max(0, x));
+        var c = 1.70158;
+        return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2);
+      }
+
+      function applyIntro() {
+        var t = introTime;
+        var grow = Math.max(0.001, easeOut(t / INTRO));
+        for (var i = 1; i < baseLengths.length; i++) lengths[i] = baseLengths[i] * grow;
+        for (var j = 0; j < baseRadii.length; j++) {
+          radii[j] = baseRadii[j] * easeBack((t - 0.12 * j) / 0.5);
+        }
+      }
+
+      function build() {
+        size = Math.min(w * 0.42, h * 0.2, 170);
+        scale = size / 170;
+        var rodLen = size, linkLen = size * 0.42;
+        var pivot = { x: w / 2, y: h / 2 - (rodLen + linkLen * LINKS) * 0.5 };
+
+        lengths = [0, rodLen];
+        radii = [9 * scale, 19 * scale];
+        invMass = [0, 0.5];
+        var bob = {
+          x: pivot.x + Math.sin(AMPLITUDE) * rodLen,
+          y: pivot.y + Math.cos(AMPLITUDE) * rodLen
+        };
+        points = [pivot, bob];
+        for (var i = 1; i <= LINKS; i++) {
+          points.push({ x: bob.x, y: bob.y + linkLen * i });
+          lengths.push(linkLen);
+          radii.push(5.5 * scale);
+          invMass.push(1);
+        }
+        baseLengths = lengths.slice();
+        baseRadii = radii.slice();
+
+        // Before (or during) the entrance, everything starts at the pivot,
+        // pointing sideways, so the links unfold out of it
+        if (introTime < INTRO + 0.6) {
+          for (var n = 1; n < points.length; n++) {
+            points[n].x = pivot.x + n * 0.01;
+            points[n].y = pivot.y;
+          }
+          applyIntro();
+        }
+        points.forEach(function (p) { p.px = p.x; p.py = p.y; });
+        drag = null;
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        build();
+      }
+
+      // Total reach from the pivot to point i, to keep a dragged ring
+      // where the links can actually follow it
+      function reach(i) {
+        var r = 0;
+        for (var k = 1; k <= i; k++) r += lengths[k];
+        return r;
+      }
+
+      // Keeps the swing alive: nudges the large ring's energy back
+      // towards the energy of the resting swing
+      function pump(dt) {
+        var bob = points[1], pivot = points[0];
+        var g = GRAVITY * scale;
+        var vx = (bob.x - bob.px) / dt, vy = (bob.y - bob.py) / dt;
+        var height = pivot.y + lengths[1] - bob.y;
+        var energy = 0.5 * (vx * vx + vy * vy) + g * height;
+        var target = g * lengths[1] * (1 - Math.cos(AMPLITUDE));
+        if (energy < target * 0.02) {
+          // Hanging still at the bottom: give it a small push sideways
+          bob.px -= 40 * scale * dt;
+          return;
+        }
+        var f = 1 + 1.2 * dt * (target - energy) / Math.max(energy, target);
+        bob.px = bob.x - (bob.x - bob.px) * f;
+        bob.py = bob.y - (bob.y - bob.py) * f;
+      }
+
+      function step(dt) {
+        var g = GRAVITY * scale * dt * dt;
+
+        for (var i = 1; i < points.length; i++) {
+          var p = points[i];
+          var vx = (p.x - p.px) * 0.9995;
+          var vy = (p.y - p.py) * 0.9995;
+          p.px = p.x; p.py = p.y;
+          p.x += vx;
+          p.y += vy + g;
+        }
+
+        if (drag) {
+          var d = points[drag.index], pv = points[0];
+          var dx = drag.x - pv.x, dy = drag.y - pv.y;
+          var dist = Math.hypot(dx, dy) || 1;
+          var max = reach(drag.index);
+          var k = dist > max ? max / dist : 1;
+          d.x = pv.x + dx * k;
+          d.y = pv.y + dy * k;
+        }
+
+        for (var it = 0; it < ITERATIONS; it++) {
+          for (var j = 1; j < points.length; j++) {
+            var a = points[j - 1], b = points[j];
+            var wa = invMass[j - 1], wb = invMass[j];
+            if (drag && drag.index === j - 1) wa = 0;
+            if (drag && drag.index === j) wb = 0;
+            if (wa + wb === 0) continue;
+            var ex = b.x - a.x, ey = b.y - a.y;
+            var len = Math.hypot(ex, ey) || 1;
+            var diff = (len - lengths[j]) / len / (wa + wb);
+            a.x += ex * diff * wa; a.y += ey * diff * wa;
+            b.x -= ex * diff * wb; b.y -= ey * diff * wb;
+          }
+        }
+
+        if (!drag && introTime > INTRO + 0.6) pump(dt);
+      }
+
+      // A tube: a black line with a narrower white line inside it
+      function tube(a, b, width) {
+        ctx.lineCap = "butt";
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = width + STROKE * 2;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = width;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+
+      function ring(p, r) {
+        if (r <= 0.1) return;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+        ctx.lineWidth = STROKE;
+        ctx.strokeStyle = "#000";
+        ctx.stroke();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        // Chain first, rod on top, then the rings over the tubes
+        for (var i = points.length - 1; i >= 2; i--) tube(points[i - 1], points[i], 4 * scale);
+        tube(points[0], points[1], 9 * scale);
+        for (var j = points.length - 1; j >= 0; j--) ring(points[j], radii[j]);
+      }
+
+      // Grabbing: any ring except the pivot
+      function ringAt(x, y) {
+        var best = -1, bestDist = Infinity;
+        for (var i = 1; i < points.length; i++) {
+          var d = Math.hypot(x - points[i].x, y - points[i].y);
+          var hit = radii[i] + 14; // a little extra room, easier on touch
+          if (d < hit && d < bestDist) { best = i; bestDist = d; }
+        }
+        return best;
+      }
+
+      canvas.addEventListener("pointerdown", function (e) {
+        var i = ringAt(e.clientX, e.clientY);
+        if (i < 0) return;
+        drag = { index: i, x: e.clientX, y: e.clientY, t: e.timeStamp / 1000, vx: 0, vy: 0 };
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+        canvas.classList.add("is-dragging");
+        e.preventDefault();
+      });
+
+      canvas.addEventListener("pointermove", function (e) {
+        if (drag) {
+          // Track the hand's speed so a release throws the ring
+          var t = e.timeStamp / 1000, dt = t - drag.t;
+          if (dt > 0) {
+            var k = Math.min(1, dt / 0.05);
+            drag.vx += ((e.clientX - drag.x) / dt - drag.vx) * k;
+            drag.vy += ((e.clientY - drag.y) / dt - drag.vy) * k;
+          }
+          drag.x = e.clientX;
+          drag.y = e.clientY;
+          drag.t = t;
+        } else {
+          canvas.classList.toggle("is-grabbable", ringAt(e.clientX, e.clientY) > 0);
+        }
+      });
+
+      function release() {
+        if (!drag) return;
+        var p = points[drag.index];
+        var max = 2500 * scale; // px/s, keeps wild throws in check
+        var vx = Math.max(-max, Math.min(max, drag.vx));
+        var vy = Math.max(-max, Math.min(max, drag.vy));
+        p.px = p.x - vx * SUBSTEP;
+        p.py = p.y - vy * SUBSTEP;
+        drag = null;
+        canvas.classList.remove("is-dragging");
+      }
+      canvas.addEventListener("pointerup", release);
+      canvas.addEventListener("pointercancel", release);
+
+      resize();
+      window.addEventListener("resize", resize);
+
+      if (reduceMotion) {
+        // No automatic swing, but the rings can still be moved by hand
+        AMPLITUDE = 0;
+        build();
+      }
+
+      var last = null, carry = 0;
+      function frame(now) {
+        now /= 1000;
+        if (last === null) last = now;
+        carry += Math.min(now - last, 0.1);
+        last = now;
+        while (carry >= SUBSTEP) {
+          if (introTime < INTRO + 0.6) {
+            introTime += SUBSTEP;
+            applyIntro();
+          }
+          step(SUBSTEP);
+          carry -= SUBSTEP;
+        }
+        draw();
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+  </script>
 </body>
 </html>
